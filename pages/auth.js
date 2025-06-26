@@ -28,7 +28,7 @@ export default function Auth() {
 
     try {
       const endpoint = isRegister ? '/register' : '/login';
-      const response = await axios.post(`${process.env.NEXT_PUBLIC_API_URL || 'http://localhost:8000'}${endpoint}`, {
+      const response = await axios.post(`${process.env.NEXT_PUBLIC_API_URL || 'https://healthtranslate.onrender.com'}${endpoint}`, {
         username: formData.email, // Using email as username for OAuth format
         password: formData.password,
         ...(isRegister && { email: formData.email })
