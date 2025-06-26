@@ -1,27 +1,42 @@
+// components/Navbar.js
 import React, { useState, useEffect } from 'react';
 import Link from 'next/link';
 import { useRouter } from 'next/router';
 import Button from './Button';
 
-const Navbar = ({ userName, onSignOut }) => {
+const Navbar = ({ onSignOut }) => {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
   const [isLoggedIn, setIsLoggedIn] = useState(false);
+  const [userName, setUserName] = useState('');
   const [mounted, setMounted] = useState(false);
   const router = useRouter();
 
   useEffect(() => {
     setMounted(true);
     const user = localStorage.getItem('user');
-    setIsLoggedIn(!!user);
+    if (user) {
+      try {
+        const parsedUser = JSON.parse(user);
+        setIsLoggedIn(true);
+        setUserName(parsedUser.username || 'User');
+      } catch (error) {
+        console.error('Invalid user data in localStorage:', error);
+        localStorage.removeItem('user');
+        setIsLoggedIn(false);
+      }
+    } else {
+      setIsLoggedIn(false);
+    }
   }, []);
 
   const handleLogout = () => {
     localStorage.removeItem('user');
     setIsLoggedIn(false);
+    setUserName('');
+    if (onSignOut) onSignOut();
     router.push('/auth');
   };
 
-  // Don't render anything until client-side
   if (!mounted) {
     return null;
   }
@@ -36,17 +51,25 @@ const Navbar = ({ userName, onSignOut }) => {
             </span>
           </div>
           <div className="flex items-center gap-4">
-            <span className="text-gray-700">
-              Welcome, {userName}
-            </span>
-            <Button
-              size="sm"
-              variant="secondary"
-              onClick={onSignOut}
-              className="text-sm"
-            >
-              Sign Out
-            </Button>
+            {isLoggedIn ? (
+              <>
+                <span className="text-gray-700">Welcome, {userName}</span>
+                <Button
+                  size="sm"
+                  variant="secondary"
+                  onClick={handleLogout}
+                  className="text-sm"
+                >
+                  Sign Out
+                </Button>
+              </>
+            ) : (
+              <Link href="/auth">
+                <Button size="sm" variant="secondary" className="text-sm">
+                  Sign In
+                </Button>
+              </Link>
+            )}
           </div>
         </div>
       </div>
@@ -54,4 +77,4 @@ const Navbar = ({ userName, onSignOut }) => {
   );
 };
 
-export default Navbar; 
+export default Navbar;
