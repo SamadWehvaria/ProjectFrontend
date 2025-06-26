@@ -1,3 +1,4 @@
+// pages/Chat.js
 import { useState, useRef, useEffect } from 'react';
 import { useRouter } from 'next/router';
 import axios from 'axios';
@@ -287,7 +288,7 @@ export default function Chat() {
 
   return (
     <div className="flex flex-col min-h-screen bg-gray-50">
-      <Navbar userName={userName} onSignOut={handleSignOut} />
+      <Navbar onSignOut={handleSignOut} /> {/* Removed userName prop */}
       
       <main className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
         <div className="bg-white rounded-lg shadow-lg overflow-hidden">
@@ -433,4 +434,4 @@ export default function Chat() {
       </main>
     </div>
   );
-} 
+}
